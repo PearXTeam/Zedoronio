@@ -31,10 +31,12 @@ namespace Zedoronio
 				return (Scene)GetMainParent(this);
 			}
 		}
+
+	    public ControlCollection Controls { get; }
 	    public Point Location { get; set; }
 		public Size Size { get; set; }
-		public ControlCollection Controls { get; set; }
 		public bool KeyEventsRequiresSelection { get; set; }
+	    public ControlSelectType SelectType { get; set; }
 
 		public Control Parent { get; set; }
 		public bool Selected { get; private set; }
@@ -96,6 +98,13 @@ namespace Zedoronio
 
 		public virtual void OnButtonDown(MouseButtonEventArgs e)
 		{
+		    foreach (var cont in Controls)
+		    {
+		        if (new RectangleF(cont.Location, cont.Size).Contains(e.Position))
+		        {
+		            cont.OnButtonDown(new MouseButtonEventArgs(e.Position.X - cont.Location.X, e.Position.Y-  cont.Location.Y, e.Button, e.IsPressed));
+		        }
+		    }
 			ButtonDown?.Invoke(this, e);
 		}
 

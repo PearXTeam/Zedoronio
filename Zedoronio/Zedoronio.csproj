@@ -53,6 +53,7 @@
     <Compile Include="Drawing\GradientBrush.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="TwD\Controls\ColoredQuad.cs" />
     <Compile Include="TwD\TwDScene.cs" />
     <Compile Include="Vaos\ModelLoader.cs" />
     <Compile Include="Vaos\RawModel.cs" />

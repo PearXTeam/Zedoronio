@@ -17,6 +17,7 @@ namespace Zedoronio.Drawing
             GL.Vertex3(x + width, y + width, depth);
             brush.BeforeVertex(3);
             GL.Vertex3(x, y + width, depth);
+
             GL.End();
         }
     }
