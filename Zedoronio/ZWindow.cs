@@ -26,6 +26,8 @@ namespace Zedoronio
 		    MouseUp += OnMouseUp;
 		    MouseMove += OnMouseMove;
 		    MouseWheel += OnMouseWheel;
+		    Size = new Size((int)(CodeSize.Width * 0.8), (int)(CodeSize.Height * 0.8));
+		    Location = new Point((DisplayDevice.Default.Width - Width) / 2, (DisplayDevice.Default.Height - Height) / 2);
 		}
 
 	    private void OnMouseWheel(object sender, MouseWheelEventArgs e)
@@ -41,14 +43,14 @@ namespace Zedoronio
 
 	    private void OnMouseUp(object sender, MouseButtonEventArgs e)
 	    {
-	        e.Position = e.Position.Divide(SizeMultiplier).ToPoint();
-	        Scene?.OnButtonUp(e);
+	        var pos = e.Position.Divide(SizeMultiplier).ToPoint();
+	        Scene?.OnButtonUp(new MouseButtonEventArgs(pos.X, pos.Y, e.Button, e.IsPressed));
 	    }
 
 	    private void OnMouseDown(object sender, MouseButtonEventArgs e)
 	    {
-	        e.Position = e.Position.Divide(SizeMultiplier).ToPoint();
-	        Scene?.OnButtonDown(e);
+	        var pos = e.Position.Divide(SizeMultiplier).ToPoint();
+	        Scene?.OnButtonDown(new MouseButtonEventArgs(pos.X, pos.Y, e.Button, e.IsPressed));
 	    }
 
 	    private void ZWindow_UpdateFrame(object sender, FrameEventArgs e)
