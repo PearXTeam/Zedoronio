@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Zedoronio
+namespace Zedoronio.TwD
 {
-	public class ControlCollection : IList<Control>, IEnumerable<Control>
+	public class ControlCollection : IList<Control>
 	{
 		protected Control Parent;
 	    protected List<Control> ControlList = new List<Control>();
@@ -35,6 +35,7 @@ namespace Zedoronio
 
 	    public void CopyTo(Control[] array, int arrayIndex)
 	    {
+	        //todo: low
 	        throw new System.NotImplementedException();
 	    }
 
@@ -48,15 +49,9 @@ namespace Zedoronio
 	        return false;
 	    }
 
-	    public int Count
-	    {
-	        get { return ControlList.Count; }
-	    }
+	    public int Count => ControlList.Count;
 
-	    public bool IsReadOnly
-	    {
-	        get { return false; }
-	    }
+	    public bool IsReadOnly => false;
 
 	    public IEnumerator<Control> GetEnumerator()
 	    {
@@ -99,7 +94,7 @@ namespace Zedoronio
     public class ControlsEnumerator : IEnumerator<Control>
     {
         private ControlCollection col;
-        private int pos = -1;
+        private int _pos = -1;
 
         public ControlsEnumerator(ControlCollection col)
         {
@@ -113,23 +108,17 @@ namespace Zedoronio
 
         public bool MoveNext()
         {
-            pos++;
-            return pos < col.Count;
+            _pos++;
+            return _pos < col.Count;
         }
 
         public void Reset()
         {
-            pos = -1;
+            _pos = -1;
         }
 
-        public Control Current
-        {
-            get { return col[pos]; }
-        }
+        public Control Current => col[_pos];
 
-        object IEnumerator.Current
-        {
-            get { return Current; }
-        }
+        object IEnumerator.Current => Current;
     }
 }

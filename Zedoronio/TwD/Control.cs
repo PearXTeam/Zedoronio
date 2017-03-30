@@ -3,12 +3,15 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using PearXLib.Maths;
+using Zedoronio.EventArguments;
 
-namespace Zedoronio
+namespace Zedoronio.TwD
 {
 	public class Control
 	{
+	    private bool _selected;
+	    public bool Entered;
+
 		public event EventHandler<FrameEventArgs> RenderFrame;
 		public event EventHandler<KeyboardKeyEventArgs> KeyDown;
 		public event EventHandler<KeyboardKeyEventArgs> KeyUp;
@@ -16,11 +19,12 @@ namespace Zedoronio
 		public event EventHandler<MouseButtonEventArgs> ButtonDown;
 		public event EventHandler<MouseButtonEventArgs> ButtonUp;
 		public event EventHandler<MouseMoveEventArgs> MouseMove;
-		public event EventHandler<MouseMoveEventArgs> MouseEnter;
-		public event EventHandler<MouseMoveEventArgs> MouseLeave;
+		public event EventHandler MouseEnter;
+		public event EventHandler MouseLeave;
 		public event EventHandler<MouseWheelEventArgs> MouseWheel;
 		public event EventHandler Load;
-		public event EventHandler Resize;
+	    public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
+	    public event EventHandler Resize;
 
 		public Scene Scene
 		{
@@ -35,11 +39,21 @@ namespace Zedoronio
 	    public ControlCollection Controls { get; }
 	    public Point Location { get; set; }
 		public Size Size { get; set; }
-		public bool KeyEventsRequiresSelection { get; set; }
-	    public ControlSelectType SelectType { get; set; }
+	    public bool KeyEventsRequiresSelection { get; set; } = true;
+	    public bool ScrollEventRequiresSelection { get; set; } = true;
+	    public ControlSelectType SelectType { get; set; } = ControlSelectType.Click;
 
 		public Control Parent { get; set; }
-		public bool Selected { get; private set; }
+
+	    public bool Selected
+	    {
+	        get { return _selected; }
+	        private set
+	        {
+	            _selected = value;
+	            OnSelectionChanged(new SelectionChangedEventArgs(value));
+	        }
+	    }
 
 		public Control(Point loc, Size s)
 		{
@@ -103,34 +117,78 @@ namespace Zedoronio
 		        if (new RectangleF(cont.Location, cont.Size).Contains(e.Position))
 		        {
 		            cont.OnButtonDown(new MouseButtonEventArgs(e.Position.X - cont.Location.X, e.Position.Y-  cont.Location.Y, e.Button, e.IsPressed));
+		            return;
 		        }
 		    }
+		    if(SelectType == ControlSelectType.Click)
+		        Select();
 			ButtonDown?.Invoke(this, e);
 		}
 
 		public virtual void OnButtonUp(MouseButtonEventArgs e)
 		{
-			ButtonUp?.Invoke(this, e);
+		    foreach (var cont in Controls)
+		    {
+		        if (new RectangleF(cont.Location, cont.Size).Contains(e.Position))
+		        {
+		            cont.OnButtonUp(new MouseButtonEventArgs(e.Position.X - cont.Location.X, e.Position.Y-  cont.Location.Y, e.Button, e.IsPressed));
+		            return;
+		        }
+		    }
+		    ButtonUp?.Invoke(this, e);
 		}
 
 		public virtual void OnMouseMove(MouseMoveEventArgs e)
 		{
+		    foreach (var cont in Controls)
+		    {
+		        if (new RectangleF(cont.Location, cont.Size).Contains(e.Position))
+		        {
+		            cont.OnMouseMove(new MouseMoveEventArgs(e.Position.X - cont.Location.X, e.Position.Y - cont.Location.Y, e.XDelta, e.YDelta));
+		            return;
+		        }
+		        if (cont.Entered)
+		        {
+		            cont.Entered = false;
+		            cont.OnMouseLeave(new EventArgs());
+		        }
+		    }
+		    if (Parent.Entered)
+		    {
+		        Parent.Entered = false;
+		        Parent.OnMouseLeave(new EventArgs());
+		    }
+		    if (!Entered)
+		    {
+		        Entered = true;
+		        OnMouseEnter(new EventArgs());
+		    }
 			MouseMove?.Invoke(this, e);
 		}
 
-		public virtual void OnMouseEnter(MouseMoveEventArgs e)
+		public virtual void OnMouseEnter(EventArgs e)
 		{
+		    if(SelectType == ControlSelectType.MouseEnter)
+		        Select();
 			MouseEnter?.Invoke(this, e);
 		}
 
-		public virtual void OnMouseLeave(MouseMoveEventArgs e)
+		public virtual void OnMouseLeave(EventArgs e)
 		{
+		    //if(SelectType == ControlSelectType.MouseEnter)
+		     //   Unselect();
 			MouseLeave?.Invoke(this, e);
 		}
 
 		public virtual void OnMouseWheel(MouseWheelEventArgs e)
 		{
-			MouseWheel?.Invoke(this, e);
+		    foreach (var cont in Controls)
+		        cont.OnMouseWheel(e);
+		    if ((ScrollEventRequiresSelection && Selected) || !ScrollEventRequiresSelection)
+		    {
+
+		        MouseWheel?.Invoke(this, e);
+		    }
 		}
 
 		public virtual void OnLoad(EventArgs e)
@@ -140,10 +198,15 @@ namespace Zedoronio
 				cont.OnLoad(e);
 		}
 
-		public virtual void OnResize(EventArgs e)
-		{
-			Resize?.Invoke(this, e);
-		}
+	    public virtual void OnSelectionChanged(SelectionChangedEventArgs e)
+	    {
+	        SelectionChanged?.Invoke(this, e);
+	    }
+
+	    public virtual void OnResize(EventArgs e)
+	    {
+	        Resize?.Invoke(this, e);
+	    }
 
 		public static void UnselectAll(Control c)
 		{

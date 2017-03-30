@@ -12,15 +12,9 @@ namespace Zedoronio
 		public Scene Scene;
 	    public Size CodeSize { get; set; }
 
-	    public SizeF SizeMultiplier
-	    {
-	        get
-	        {
-	            return new SizeF((float) Size.Width / CodeSize.Width, (float) Size.Height / CodeSize.Height);
-	        }
-	    }
+	    public SizeF SizeMultiplier => new SizeF((float) Size.Width / CodeSize.Width, (float) Size.Height / CodeSize.Height);
 
-		public ZWindow(Size codeSize)
+	    public ZWindow(Size codeSize)
 		{
 		    CodeSize = codeSize;
 			RenderFrame += ZWindow_UpdateFrame;
@@ -29,7 +23,27 @@ namespace Zedoronio
 			KeyPress += ZWindow_KeyPress;
 			Resize += ZWindow_Resize;
 		    MouseDown += OnMouseDown;
+		    MouseUp += OnMouseUp;
+		    MouseMove += OnMouseMove;
+		    MouseWheel += OnMouseWheel;
 		}
+
+	    private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+	    {
+	        Scene?.OnMouseWheel(e);
+	    }
+
+	    private void OnMouseMove(object sender, MouseMoveEventArgs e)
+	    {
+	        var pos = e.Position.Divide(SizeMultiplier).ToPoint();
+	       Scene?.OnMouseMove(new MouseMoveEventArgs(pos.X, pos.Y, (int)Math.Round(e.XDelta / SizeMultiplier.Width), (int)Math.Round(e.YDelta / SizeMultiplier.Height)));
+	    }
+
+	    private void OnMouseUp(object sender, MouseButtonEventArgs e)
+	    {
+	        e.Position = e.Position.Divide(SizeMultiplier).ToPoint();
+	        Scene?.OnButtonUp(e);
+	    }
 
 	    private void OnMouseDown(object sender, MouseButtonEventArgs e)
 	    {
@@ -37,7 +51,7 @@ namespace Zedoronio
 	        Scene?.OnButtonDown(e);
 	    }
 
-	    void ZWindow_UpdateFrame(object sender, FrameEventArgs e)
+	    private void ZWindow_UpdateFrame(object sender, FrameEventArgs e)
 		{
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 			Scene?.OnRenderFrame(e);
@@ -49,7 +63,7 @@ namespace Zedoronio
 			Scene?.OnKeyDown(e);
 		}
 
-		void ZWindow_KeyUp(object sender, KeyboardKeyEventArgs e)
+	    private void ZWindow_KeyUp(object sender, KeyboardKeyEventArgs e)
 		{
 			if (e.Key == Key.F11)
 			{
@@ -62,15 +76,15 @@ namespace Zedoronio
 			Scene?.OnKeyUp(e);
 		}
 
-		void ZWindow_KeyPress(object sender, KeyPressEventArgs e)
+	    private void ZWindow_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			Scene?.OnKeyPress(e);
 		}
 
-		void ZWindow_Resize(object sender, EventArgs e)
+	    private void ZWindow_Resize(object sender, EventArgs e)
 		{
 			GL.Viewport(0, 0, ClientSize.Width, ClientSize.Height);
-			Scene?.OnResize(new EventArgs());
+		    Scene?.OnResize(new EventArgs());
 		}
 
 		public void ChangeScene(Scene sc)

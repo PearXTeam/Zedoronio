@@ -1,4 +1,4 @@
-﻿namespace Zedoronio
+﻿namespace Zedoronio.TwD
 {
 	public enum ControlSelectType
 	{
