@@ -15,7 +15,7 @@ namespace Zedoronio.Typography
             Bitmap outBmp;
             using (Font f = new Font(fontName, size))
             {
-                using (Bitmap bmp = new Bitmap((int) (chars.Length * (size * 0.8)), (int) (size * 1.7)))
+                using (Bitmap bmp = new Bitmap((int) (chars.Length * (size * 1.6)), (int) (size * 1.7)))
                 {
                     foreach (var ch in chars)
                     {
@@ -23,8 +23,10 @@ namespace Zedoronio.Typography
                         {
                             var sz = gfx.MeasureString(ch.ToString(), f);
                             gfx.DrawString(ch.ToString(), f, new SolidBrush(Color.Black), x, 0);
-                            atl.Entries.Add(ch, new TypographyAtlasEntry{X = x, Width =  (short)sz.Width, Height = (short)sz.Height});
+                            atl.Entries.Add(ch, new TypographyAtlasEntry{X = x, Width =  (short)sz.Width});
+                            atl.Height = (short) sz.Height;
                             x += (short) sz.Width;
+                            x += 5;
                             if (h < sz.Height)
                                 h = (byte) sz.Height;
                         }

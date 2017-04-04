@@ -9,12 +9,46 @@ namespace Zedoronio.Textures
 {
     public class Texture : IDisposable
     {
+        private TextureWrapMode wm = TextureWrapMode.Repeat;
+        private TextureMinFilter minf = TextureMinFilter.Nearest;
+        private TextureMagFilter magf = TextureMagFilter.Nearest;
         public int Id { get; set; }
-        public TextureWrapMode WrapMode { get; set; } = TextureWrapMode.Repeat;
-        public TextureMinFilter MinFilter { get; set; } = TextureMinFilter.Nearest;
-        public TextureMagFilter MagFilter { get; set; } = TextureMagFilter.Nearest;
+
+        public TextureWrapMode WrapMode
+        {
+            get { return wm; }
+            set
+            {
+                wm = value;
+                GL.BindTexture(TextureTarget.Texture2D, Id);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) WrapMode);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) WrapMode);
+            }
+        }
+
+        public TextureMinFilter MinFilter
+        {
+            get { return minf; }
+            set
+            {
+                minf = value;
+                GL.BindTexture(TextureTarget.Texture2D, Id);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) MinFilter);
+            }
+        }
+
+        public TextureMagFilter MagFilter
+        {
+            get { return magf; }
+            set
+            {
+                magf = value;
+                GL.BindTexture(TextureTarget.Texture2D, Id);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) MagFilter);
+            }
+        }
+
         public Size Size { get; private set; }
-        public SizeF TextureCoords { get; private set; }
 
         public Texture()
         {
@@ -29,7 +63,6 @@ namespace Zedoronio.Textures
         public void LoadImage(Image img)
         {
             Size = img.Size;
-            TextureCoords = new SizeF(1f, 1f);
             using (var bmp = new Bitmap(img))
             {
                 GL.Enable(EnableCap.Texture2D);

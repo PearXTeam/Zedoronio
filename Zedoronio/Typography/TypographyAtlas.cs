@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using OpenTK.Graphics.OpenGL;
 using Zedoronio.Textures;
 
 namespace Zedoronio.Typography
@@ -13,9 +14,12 @@ namespace Zedoronio.Typography
 
         public Dictionary<char, TypographyAtlasEntry> Entries { get; set; } = new Dictionary<char, TypographyAtlasEntry>();
         public Texture Texture { get; set; } = new Texture();
+        public short Height { get; set; }
 
         public void LoadAtlas(Bitmap bmp)
         {
+            Texture.MinFilter = TextureMinFilter.Linear;
+            Texture.MagFilter = TextureMagFilter.Linear;
             Texture.LoadImage(bmp);
         }
 
@@ -24,12 +28,12 @@ namespace Zedoronio.Typography
             using (BinaryWriter wr = new BinaryWriter(str))
             {
                 wr.Write(Signature);
+                wr.Write(Height);
                 foreach (var pair in Entries)
                 {
                     wr.Write(pair.Key);
                     wr.Write(pair.Value.X);
                     wr.Write(pair.Value.Width);
-                    wr.Write(pair.Value.Height);
                 }
             }
         }
@@ -51,6 +55,7 @@ namespace Zedoronio.Typography
                 {
                     throw new FileLoadException("Invalid signature!");
                 }
+                Height = r.ReadInt16();
                 Entries = new Dictionary<char, TypographyAtlasEntry>();
                 while (true)
                 {
@@ -60,7 +65,6 @@ namespace Zedoronio.Typography
                         TypographyAtlasEntry entr = new TypographyAtlasEntry();
                         entr.X = r.ReadInt16();
                         entr.Width = r.ReadInt16();
-                        entr.Height = r.ReadInt16();
                         Entries.Add(ch, entr);
                     }
                     catch (EndOfStreamException)

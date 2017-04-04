@@ -7,12 +7,12 @@ namespace Zedoronio.Drawing
     public class TextureBrush: Brush
     {
         private Texture Tex;
-        private Point[] Points;
+        private PointF[] Points;
 
-        public TextureBrush(Texture tex, Point[] pts = null)
+        public TextureBrush(Texture tex, PointF[] pts = null)
         {
             if (pts == null)
-                Points = new Point[]
+                Points = new PointF[]
                 {
                     new Point(0, 0),
                     new Point(1, 0),

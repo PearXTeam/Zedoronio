@@ -34,7 +34,7 @@ namespace Zedoronio.TwD.Controls
 
         private void OnRenderFrame(object sender, FrameEventArgs frameEventArgs)
         {
-            DrawingTools.DrawRectangle(0, 0, Size.Width, Size.Height, new TextureBrush(Tex));
+            DrawingTools.DrawRectangle(0, 0, Size.Width, Size.Height, new ColorBrush(Color.White));
         }
     }
 }
