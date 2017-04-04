@@ -11,5 +11,10 @@
         {
 
         }
+
+        public virtual void AfterDraw()
+        {
+
+        }
     }
 }

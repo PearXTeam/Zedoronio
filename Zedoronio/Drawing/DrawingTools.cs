@@ -7,8 +7,8 @@ namespace Zedoronio.Drawing
     {
         public static void DrawRectangle(int x, int y, int width, int height, Brush brush, int depth = 0)
         {
-            GL.Begin(PrimitiveType.Quads);
             brush.BeforeDraw();
+            GL.Begin(PrimitiveType.Quads);
             brush.BeforeVertex(0);
             GL.Vertex3(x, y, depth);
             brush.BeforeVertex(1);
@@ -17,8 +17,8 @@ namespace Zedoronio.Drawing
             GL.Vertex3(x + width, y + width, depth);
             brush.BeforeVertex(3);
             GL.Vertex3(x, y + width, depth);
-
             GL.End();
+            brush.AfterDraw();
         }
     }
 }
