@@ -49,6 +49,7 @@
     <Compile Include="Drawing\DrawingTools.cs" />
     <Compile Include="Drawing\FontRenderer.cs" />
     <Compile Include="Drawing\GradientBrush.cs" />
+    <Compile Include="Drawing\MixedBrush.cs" />
     <Compile Include="Drawing\TextureBrush.cs" />
     <Compile Include="EventArguments\SelectionChangedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="TwD\Control.cs" />
     <Compile Include="TwD\ControlCollection.cs" />
     <Compile Include="TwD\ControlSelectType.cs" />
-    <Compile Include="TwD\Controls\TestingControl.cs" />
+    <Compile Include="TwD\Controls\ProgressBar.cs" />
     <Compile Include="TwD\TwDScene.cs" />
     <Compile Include="Typography\TypographyAtlasEntry.cs" />
     <Compile Include="Typography\TypographyAtlasGenerator.cs" />

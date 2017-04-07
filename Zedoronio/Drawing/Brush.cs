@@ -7,6 +7,11 @@
 
         }
 
+        public virtual void StartBegin()
+        {
+
+        }
+
         public virtual void BeforeVertex(int vert)
         {
 
@@ -16,5 +21,6 @@
         {
 
         }
+
     }
 }

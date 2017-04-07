@@ -9,6 +9,7 @@ namespace Zedoronio.Drawing
         {
             brush.BeforeDraw();
             GL.Begin(PrimitiveType.Quads);
+            brush.StartBegin();
             brush.BeforeVertex(0);
             GL.Vertex3(x, y, depth);
             brush.BeforeVertex(1);

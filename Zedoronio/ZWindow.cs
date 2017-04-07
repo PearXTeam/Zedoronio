@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Timers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Input;
@@ -14,8 +15,18 @@ namespace Zedoronio
 
 	    public SizeF SizeMultiplier => new SizeF((float) Size.Width / CodeSize.Width, (float) Size.Height / CodeSize.Height);
 
+	    protected Timer TimerFps = new Timer(1000);
+	    private int RenderCalled = 0;
+	    public int Fps { get; set; }
+
+	    public bool FpsCounter
+	    {
+	        get { return TimerFps.Enabled; }
+	        set { TimerFps.Enabled = value; }
+	    }
+
 	    public ZWindow(Size codeSize)
-		{
+	    {
 		    CodeSize = codeSize;
 			RenderFrame += ZWindow_UpdateFrame;
 			KeyDown += ZWindow_KeyDown;
@@ -28,7 +39,19 @@ namespace Zedoronio
 		    MouseWheel += OnMouseWheel;
 		    Size = new Size((int)(CodeSize.Width * 0.8), (int)(CodeSize.Height * 0.8));
 		    Location = new Point((DisplayDevice.Default.Width - Width) / 2, (DisplayDevice.Default.Height - Height) / 2);
+	        Load += OnLoad;
+
+		    TimerFps.Elapsed += (sender, args) =>
+		    {
+		        Fps = RenderCalled;
+		        RenderCalled = 0;
+		    };
 		}
+
+	    private void OnLoad(object o, EventArgs eventArgs)
+	    {
+	        GL.ClearColor(Color.White);
+	    }
 
 	    private void OnMouseWheel(object sender, MouseWheelEventArgs e)
 	    {
@@ -54,7 +77,8 @@ namespace Zedoronio
 	    }
 
 	    private void ZWindow_UpdateFrame(object sender, FrameEventArgs e)
-		{
+	    {
+	        RenderCalled++;
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 			Scene?.OnRenderFrame(e);
 			SwapBuffers();

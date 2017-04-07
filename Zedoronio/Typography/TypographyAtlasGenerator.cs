@@ -22,7 +22,7 @@ namespace Zedoronio.Typography
                         using (Graphics gfx = Graphics.FromImage(bmp))
                         {
                             var sz = gfx.MeasureString(ch.ToString(), f);
-                            gfx.DrawString(ch.ToString(), f, new SolidBrush(Color.Black), x, 0);
+                            gfx.DrawString(ch.ToString(), f, new SolidBrush(Color.White), x, 0);
                             atl.Entries.Add(ch, new TypographyAtlasEntry{X = x, Width =  (short)sz.Width});
                             atl.Height = (short) sz.Height;
                             x += (short) sz.Width;

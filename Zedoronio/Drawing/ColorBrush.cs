@@ -11,7 +11,7 @@ namespace Zedoronio.Drawing
             _Color = col;
         }
 
-        public override void BeforeDraw()
+        public override void StartBegin()
         {
             GL.Color3(_Color);
         }
