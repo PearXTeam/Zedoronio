@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Timers;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Input;
 using PearXLib.Maths;
@@ -10,6 +11,8 @@ namespace Zedoronio
 {
 	public class ZWindow : GameWindow
 	{
+
+
 		public Scene Scene;
 	    public Size CodeSize { get; set; }
 
@@ -25,7 +28,7 @@ namespace Zedoronio
 	        set { TimerFps.Enabled = value; }
 	    }
 
-	    public ZWindow(Size codeSize)
+	    public ZWindow(Size codeSize) : base((int)(codeSize.Width * 0.8f), (int)(codeSize.Height * 0.8f))
 	    {
 		    CodeSize = codeSize;
 			RenderFrame += ZWindow_UpdateFrame;
@@ -37,7 +40,6 @@ namespace Zedoronio
 		    MouseUp += OnMouseUp;
 		    MouseMove += OnMouseMove;
 		    MouseWheel += OnMouseWheel;
-		    Size = new Size((int)(CodeSize.Width * 0.8), (int)(CodeSize.Height * 0.8));
 		    Location = new Point((DisplayDevice.Default.Width - Width) / 2, (DisplayDevice.Default.Height - Height) / 2);
 	        Load += OnLoad;
 
