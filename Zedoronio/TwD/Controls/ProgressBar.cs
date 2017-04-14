@@ -47,7 +47,8 @@ namespace Zedoronio.TwD.Controls
         private void OnRenderFrame(object sender, FrameEventArgs frameEventArgs)
         {
             DrawingTools.DrawRectangle(0, 0, Size.Width, Size.Height, new ColorBrush(BackgroudColor));
-            DrawingTools.DrawRectangle(5, 5, (int)((float)(Size.Width - 10) / MaxValue * Value), Size.Height - 10, new ColorBrush(ForeColor));
+            var w = (int) ((float) (Size.Width - 10) / MaxValue * Value);
+            DrawingTools.DrawRectangle(5, 5, w, Size.Height - 10, new ColorBrush(ForeColor));
             if (!string.IsNullOrWhiteSpace(Text))
             {
                 var sz = FontRenderer.Measure(Text, Atlas);
